@@ -28,21 +28,21 @@ where nom like ('A%') and nom like ('%r%');
 
 --6. Numéros des habitants ayant bu les potions numéros 1, 3 ou 4. (8 lignes)
 
-select distinct h.nom as num_hab_ayant_absorbes_potions_1_3_ou_4
+select distinct h.num_hab as num_hab_ayant_absorbes_potions_1_3_ou_4
 from habitant h
 join absorber a on h.num_hab = a.num_hab 
-where num_potion in (1,3,4)  ;
+where num_potion in (1,3,4) ;
 
 --7. Liste des trophées : numéro, date de prise, nom de la catégorie et nom du preneur. (10lignes)
 
-select t.num_preneur as numero_de_trophee, t.date_prise, c.nom_categ , h.nom as nom_preneur_se 
+select t.num_preneur as numero_de_trophee, t.date_prise, c.nom_categ , h.nom as nom_preneur 
 from trophee t
 join categorie c on t.code_cat = c.code_cat 
 join habitant h on t.num_preneur = h.num_hab ;
 
 --8. Nom des habitants qui habitent à Aquilona. (7 lignes)
 
-select h.nom as noms_habitant_e_s_aquilona
+select h.nom as noms_habitants_aquilona
 from habitant h
 join village v on v.num_village = h.num_village 
 where v.nom_village = 'Aquilona';
@@ -57,7 +57,7 @@ where t.code_cat = 'BLT';
 
 --10. Liste des potions (libellés) fabriquées par Panoramix : libellé, formule et constituantprincipal. (3 lignes)
 
-select distinct p.lib_potion as potion_par_Panoramix
+select distinct p.lib_potion as potion_par_Panoramix, p.formule , p.constituant_principal 
 from potion p 
 join fabriquer f on p.num_potion = f.num_potion 
 join habitant h  on h.num_hab = f.num_hab 
@@ -93,14 +93,14 @@ where hBis.nom = 'Amnésix';
 
 --14. Nom des habitants dont la qualité n'est pas renseignée. (2 lignes)
 
-select h.nom
+select h.nom as hab_dont_qualite_is_null
 from habitant h 
 left join qualite q on h.num_qualite = q.num_qualite 
 where q.lib_qualite is null;
 
 --15. Nom des habitants ayant consommé la Potion magique n°1 (c'est le libellé de la potion) en février 52. (3 lignes)
 
-select h.nom
+select h.nom as hab_ayant_bu_potion_1_fev_52
 from habitant h 
 join absorber a on h.num_hab = a.num_hab 
 join potion p on a.num_potion = p.num_potion 
@@ -116,7 +116,7 @@ order by h.nom asc;
 
 --17. Liste des resserres classées de la plus grande à la plus petite : nom de resserre et nom du village. (3 lignes)
 
-select r.nom_resserre
+select r.nom_resserre as resserre_par_taille_decroissante, v.nom_village 
 from resserre r
 join village v on r.num_resserre  = v.num_village 
 order by r.superficie asc;
@@ -125,7 +125,7 @@ order by r.superficie asc;
 
 --18. Nombre d'habitants du village numéro 5. (4)
 
-select h.nom
+select count(h.nom) as nbr_hab_village_5
 from habitant h 
 join village v on h.num_village = v.num_village 
 where h.num_village  = 5;
@@ -133,7 +133,7 @@ where h.num_village  = 5;
 
 --19. Nombre de points gagnés par Goudurix. (5)
 
-select c.nb_points,h.num_hab, h.nom
+select sum(c.nb_points) as nbr_pts_gagnes_par_Goudurix
 from categorie c 
 join trophee t on c.code_cat = t.code_cat 
 join habitant h on t.num_preneur  = h.num_hab 
@@ -141,20 +141,20 @@ where h.nom = 'Goudurix';
 
 --20. Date de première prise de trophée. (03/04/52)
 
-select min(t.date_prise)
+select min(t.date_prise) as date_premiere_prise_trophee
 from trophee t;
 
 
 --21. Nombre de louches de Potion magique n°2 (c'est le libellé de la potion) absorbées. (19)
 
-select a.quantite
+select sum(a.quantite) as nbr_louches_potion_2_absorbees
 from absorber a 
 join potion p on a.num_potion  = p.num_potion  
 where p.lib_potion = 'Potion magique n°2';
 
 --22. Superficie la plus grande. (895)
 
-select max(r.superficie)
+select max(r.superficie) as superficie_la_plus_grd
 from resserre r;
 
 --***
@@ -169,7 +169,7 @@ GROUP BY v.nom_village;
 
 --24. Nombre de trophées par habitant (6 lignes)
 
-select h.nom, count(t.num_preneur)
+select h.nom, count(t.num_preneur) as nombre_trophees
 from habitant h 
 join trophee t on h.num_hab = t.num_preneur
 group by h.nom ;
@@ -177,23 +177,23 @@ group by h.nom ;
 
 --25. Moyenne d'âge des habitants par province (nom de province, calcul). (3 lignes)
 
-SELECT v.num_province AS nom_de_province, AVG(h.age) AS calcul
-FROM habitant h
-JOIN village v ON h.num_village = v.num_village
-GROUP BY v.num_province;
+select v.num_province as nom_de_province, avg(h.age) as calcul_age_moyen_hab
+from habitant h
+join village v ON h.num_village = v.num_village
+group by v.num_province;
 
 
 --26. Nombre de potions différentes absorbées par chaque habitant (nom et nombre). (9lignes)
 
-SELECT h.nom AS nom_habitant, COUNT(DISTINCT a.num_potion) AS nombre_de_potions_differentes
-FROM habitant h
-JOIN absorber a ON h.num_hab = a.num_hab
-GROUP BY h.nom;
+select h.nom , count(distinct a.num_potion) as nbr_potions_differentes_absorbees
+from habitant h
+join absorber a on h.num_hab = a.num_hab
+group by h.nom ;
 
 
 --27. Nom des habitants ayant bu plus de 2 louches de potion zen. (1 ligne)
 
-select h.nom , a.quantite 
+select h.nom as hab_ayant_bu_plus_de_2_louches_zen  
 from habitant h 
 join absorber a on h.num_hab = a.num_hab
 join potion p on a.num_potion = p.num_potion 
@@ -203,18 +203,15 @@ where a.quantite > 2 and p.lib_potion = 'Potion Zen';
 --***
 --28. Noms des villages dans lesquels on trouve une resserre (3 lignes)
 
-select v.nom_village
+select v.nom_village as villages_avec_resserre
 from village v
 join resserre r on v.num_village = r.num_village ;
 
 --29. Nom du village contenant le plus grand nombre de huttes. (Gergovie)
 
-select v.nom_village
+select v.nom_village as village_avec_le_plus_de_huttes
 from village v 
- WHERE v.nb_huttes = (
-    SELECT MAX(nb_huttes)
-    FROM village
-);
+where v.nb_huttes = (select max(nb_huttes) from village);
 
 --30. Noms des habitants ayant pris plus de trophées qu'Obélix (3 lignes).
 
