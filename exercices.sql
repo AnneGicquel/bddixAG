@@ -47,7 +47,6 @@ from habitant h
 join village v on v.num_village = h.num_village 
 where v.nom_village = 'Aquilona';
 
-
 --9. Nom des habitants ayant pris des trophées de catégorie Bouclier de Légat. (2 lignes)
 
 select h.nom as hab_ayant_pris_BLT
@@ -71,7 +70,6 @@ join absorber a on p.num_potion = a.num_potion
 join habitant h on a.num_hab = h.num_hab 
 where h.nom = 'Homéopatix';
 
-
 --12. Liste des habitants (noms) ayant absorbé une potion fabriquée par l'habitant numéro 3. (4 lignes)
 
 select distinct h.nom as hab_ayant_bu_potion_made_by_hab_3
@@ -80,16 +78,14 @@ join absorber a on h.num_hab = a.num_hab
 join fabriquer f on a.num_potion = f.num_hab
 where f.num_hab = 3;
 
-
 --13. Liste des habitants (noms) ayant absorbé une potion fabriquée par Amnésix. (7 lignes)
 
-select distinct h.nom
+select distinct h.nom as hab_ayant_aborbe_potion_faite_par_amnesix
 from habitant h
 join absorber a on h.num_hab = a.num_hab
 join fabriquer f on a.num_potion = f.num_potion
 join habitant hBis on f.num_hab = hBis.num_hab
 where hBis.nom = 'Amnésix';
-
 
 --14. Nom des habitants dont la qualité n'est pas renseignée. (2 lignes)
 
@@ -106,7 +102,6 @@ join absorber a on h.num_hab = a.num_hab
 join potion p on a.num_potion = p.num_potion 
 where p.lib_potion = 'Potion magique n°1'
 and a.date_a in ('2052-02-18 00:00:00','2052-02-20 00:00:00','2052-02-20 00:00:00','2052-02-20 00:00:00');
-
 
 --16. Nom et âge des habitants par ordre alphabétique. (22 lignes)
 
@@ -130,7 +125,6 @@ from habitant h
 join village v on h.num_village = v.num_village 
 where h.num_village  = 5;
 
-
 --19. Nombre de points gagnés par Goudurix. (5)
 
 select sum(c.nb_points) as nbr_pts_gagnes_par_Goudurix
@@ -143,7 +137,6 @@ where h.nom = 'Goudurix';
 
 select min(t.date_prise) as date_premiere_prise_trophee
 from trophee t;
-
 
 --21. Nombre de louches de Potion magique n°2 (c'est le libellé de la potion) absorbées. (19)
 
@@ -165,7 +158,6 @@ select v.nom_village, count(h.num_hab) as nombre_habitants
 from habitant h
 join village v on h.num_village = v.num_village
 group by v.nom_village;
-
 
 --24. Nombre de trophées par habitant (6 lignes)
 
@@ -199,8 +191,8 @@ join absorber a on h.num_hab = a.num_hab
 join potion p on a.num_potion = p.num_potion 
 where a.quantite > 2 and p.lib_potion = 'Potion Zen';
 
-
 --***
+
 --28. Noms des villages dans lesquels on trouve une resserre (3 lignes)
 
 select v.nom_village as villages_avec_resserre
