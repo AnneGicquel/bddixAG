@@ -161,10 +161,10 @@ from resserre r;
 
 --23. Nombre d'habitants par village (nom du village, nombre). (7 lignes)
 
-SELECT v.nom_village, COUNT(h.num_hab) AS nombre_habitants
-FROM habitant h
-JOIN village v ON h.num_village = v.num_village
-GROUP BY v.nom_village;
+select v.nom_village, count(h.num_hab) as nombre_habitants
+from habitant h
+join village v on h.num_village = v.num_village
+group by v.nom_village;
 
 
 --24. Nombre de trophées par habitant (6 lignes)
